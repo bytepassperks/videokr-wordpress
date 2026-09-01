@@ -1,0 +1,38 @@
+# MySQL/MariaDB memory tuning for Render Starter plan (512 MB RAM)
+# WordPress + MariaDB + Apache must share 512 MB total
+# Target: MariaDB ~150 MB, Apache/PHP ~300 MB, OS ~62 MB
+
+[mysqld]
+# InnoDB buffer pool - main memory consumer, cap at 64 MB (default is 128 MB)
+innodb_buffer_pool_size = 64M
+
+# Reduce log buffer (log file size left at default to avoid recovery issues on existing data)
+innodb_log_buffer_size = 4M
+
+# Per-connection buffers (WordPress typically has 1-5 concurrent connections)
+sort_buffer_size = 256K
+read_buffer_size = 256K
+read_rnd_buffer_size = 256K
+join_buffer_size = 256K
+
+# Key buffer for MyISAM (WordPress uses InnoDB, but keep small for system tables)
+key_buffer_size = 8M
+
+# Thread and table caches
+thread_cache_size = 4
+table_open_cache = 64
+
+# NOTE: query_cache removed in MariaDB 10.4+ — do not add query_cache_* directives
+
+# Temp table limits
+tmp_table_size = 16M
+max_heap_table_size = 16M
+
+# Connection limits
+max_connections = 20
+
+# Disable performance schema (saves ~30-40 MB)
+performance_schema = OFF
+
+# Reduce binary logging overhead
+skip-log-bin
