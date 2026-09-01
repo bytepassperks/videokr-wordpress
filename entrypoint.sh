@@ -8,6 +8,8 @@ WP_SITE_URL="${WP_SITE_URL:-https://lifetime.videokr.com}"
 
 mkdir -p /data/wp-content/plugins /data/wp-content/themes /data/wp-content/uploads
 mkdir -p /data/mysql /run/mysqld
+chown www-data:www-data /data
+chmod 755 /data
 chown -R mysql:mysql /data/mysql /run/mysqld
 
 escape_sql_string() {
@@ -82,7 +84,7 @@ HTACCESS
 rm -rf /var/www/html/wp-content
 ln -sf /data/wp-content /var/www/html/wp-content
 
-chown -R www-data:www-data /data/wp-content /var/www/html
+chown -R www-data:www-data /var/www/html
 
 echo "memory_limit = 128M" > /usr/local/etc/php/conf.d/memory-limit.ini
 echo "opcache.memory_consumption = 64" >> /usr/local/etc/php/conf.d/memory-limit.ini
@@ -124,5 +126,8 @@ if ! wp core is-installed --allow-root --path=/var/www/html 2>/dev/null &&
         --admin_email="$WP_ADMIN_EMAIL" \
         --skip-email
 fi
+
+chown -R www-data:www-data /data/wp-content
+chmod -R u+rwX /data/wp-content
 
 exec apache2-foreground
